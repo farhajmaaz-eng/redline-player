@@ -239,7 +239,7 @@ public class MainActivity extends Activity {
         if (groupFilter != null) {
             TextView back = actionText("<  ALL " + tabName() + "", () -> { groupFilter = null; renderScreen(); });
             screenContainer.addView(back, new LinearLayout.LayoutParams(-1, dp(42)));
-            addTrackList(LibraryStore.getLibrary(this), true, null);
+            addTrackList(filteredTracks(), true, null);
         } else if (libraryTab == 0) {
             addTrackList(LibraryStore.getLibrary(this), true, null);
         } else {
@@ -395,7 +395,7 @@ public class MainActivity extends Activity {
         ListView list = new ListView(this);
         list.setDivider(null);
         list.setAdapter(new GroupAdapter(keys, libraryTab));
-        list.setOnItemClickListener((parent, view, position, id) -> { groupFilter = keys.get(position); libraryTab = 0; renderScreen(); });
+        list.setOnItemClickListener((parent, view, position, id) -> { groupFilter = keys.get(position); renderScreen(); });
         screenContainer.addView(list, new LinearLayout.LayoutParams(-1, 0, 1));
     }
 
@@ -434,6 +434,12 @@ public class MainActivity extends Activity {
         TextView count = label(detail, 11, color(R.color.muted), Typeface.NORMAL);
         row.addView(count);
         return row;
+    }
+
+    private ArrayList<Track> filteredTracks() {
+        ArrayList<Track> result = new ArrayList<>();
+        for (Track track : LibraryStore.getLibrary(this)) if (groupFilter == null || groupValue(track, libraryTab).equals(groupFilter)) result.add(track);
+        return result;
     }
 
     private ArrayList<String> groupedKeys(int tab) {
@@ -495,7 +501,9 @@ public class MainActivity extends Activity {
         if ((stateUri == null || stateUri.isEmpty()) && added > 0) {
             ArrayList<Track> tracks = LibraryStore.getLibrary(this);
             int index = 0;
-            for (int i = 0; i < tracks.size(); i++) if (uris.toString().contains(tracks.get(i).uri)) { index = i; break; }
+            for (int i = 0; i < tracks.size(); i++) {
+                for (Uri importedUri : uris) if (tracks.get(i).uri.equals(importedUri.toString())) { index = i; break; }
+            }
             playTracks(tracks, index);
         }
     }
@@ -601,8 +609,9 @@ public class MainActivity extends Activity {
     }
 
     private void removeFromLibrary(Track track) {
+        ArrayList<Track> queued = LibraryStore.tracksForUris(this, LibraryStore.getQueueUris(this));
+        int index = findTrack(queued, track.uri);
         LibraryStore.removeUri(this, track.uri);
-        int index = findTrack(LibraryStore.tracksForUris(this, LibraryStore.getQueueUris(this)), track.uri);
         if (index >= 0) sendIndex(PlayerService.ACTION_REMOVE_QUEUE, index);
         refreshLibrary();
     }

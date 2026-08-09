@@ -240,7 +240,7 @@ public final class LibraryStore {
 
     private static boolean isReadable(ContentResolver resolver, String uri) {
         try (Cursor cursor = resolver.query(Uri.parse(uri), new String[]{OpenableColumns.DISPLAY_NAME}, null, null, null)) {
-            return cursor != null;
+            return cursor != null && cursor.moveToFirst();
         } catch (Exception ignored) {
             return false;
         }

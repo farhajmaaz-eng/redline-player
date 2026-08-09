@@ -132,6 +132,7 @@ public class PlayerService extends Service {
         } else if (ACTION_CLEAR_QUEUE.equals(action)) {
             queue.clear();
             currentIndex = -1;
+            currentTrack = null;
             releasePlayer();
             saveState();
             broadcastState();
@@ -155,6 +156,7 @@ public class PlayerService extends Service {
         if (nextQueue.isEmpty()) {
             queue.clear();
             currentIndex = -1;
+            currentTrack = null;
             releasePlayer();
             saveState();
             broadcastState();
