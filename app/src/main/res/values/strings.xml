@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Redline Player</string>
+    <string name="choose_track">Choose an MP3</string>
+    <string name="no_track">No track loaded</string>
+    <string name="ready">Ready when you are</string>
+    <string name="pause">Pause</string>
+    <string name="play">Play</string>
+</resources>
