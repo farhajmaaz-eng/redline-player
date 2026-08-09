@@ -231,7 +231,7 @@ public final class LibraryStore {
             String durationText = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION);
             if (durationText != null) duration = Long.parseLong(durationText);
         } catch (Exception ignored) {
-            if (!isReadable(context.getContentResolver(), uri)) return null;
+            if (!isReadable(context.getContentResolver(), uri.toString())) return null;
         } finally {
             try { retriever.release(); } catch (Exception ignored) { }
         }

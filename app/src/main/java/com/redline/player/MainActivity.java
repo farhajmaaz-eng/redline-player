@@ -82,9 +82,9 @@ public class MainActivity extends Activity {
     private final BroadcastReceiver stateReceiver = new BroadcastReceiver() {
         @Override public void onReceive(Context context, Intent intent) {
             stateUri = intent.getStringExtra(PlayerService.EXTRA_URI);
-            stateTitle = intent.getStringExtra("title");
-            stateArtist = intent.getStringExtra("artist");
-            stateAlbum = intent.getStringExtra("album");
+            stateTitle = safe(intent.getStringExtra("title"));
+            stateArtist = safe(intent.getStringExtra("artist"));
+            stateAlbum = safe(intent.getStringExtra("album"));
             statePosition = intent.getLongExtra("position", 0L);
             stateDuration = intent.getLongExtra("duration", 0L);
             statePlaying = intent.getBooleanExtra("playing", false);
@@ -837,6 +837,8 @@ public class MainActivity extends Activity {
         drawable.setCornerRadius(radius);
         return drawable;
     }
+    private String safe(String value) { return value == null ? "" : value; }
+
     private String formatTime(long millis) {
         int seconds = (int) Math.max(0L, millis / 1000L);
         return String.format(java.util.Locale.US, "%d:%02d", seconds / 60, seconds % 60);
